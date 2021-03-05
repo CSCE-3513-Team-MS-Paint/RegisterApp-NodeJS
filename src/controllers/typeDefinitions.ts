@@ -1,4 +1,9 @@
 // Request object definitions
+export interface SignInRequest {
+	password: string;
+	employeeId: string;
+}
+
 export interface ProductSaveRequest {
 	id?: string;
 	count: number;
@@ -12,7 +17,6 @@ export interface EmployeeSaveRequest {
 	password: string;
 	firstName: string;
 	managerId?: string;
-	employeeId: string;
 	classification: number;
 	isInitialEmployee?: boolean;
 }
@@ -56,6 +60,10 @@ export interface PageResponse {
 	errorMessage?: string;
 }
 
+export interface SignInPageResponse extends PageResponse {
+	employeeId: string;
+}
+
 export interface MainMenuPageResponse extends PageResponse {
 	isElevatedUser: boolean;
 }
@@ -63,6 +71,12 @@ export interface MainMenuPageResponse extends PageResponse {
 export interface ProductDetailPageResponse extends PageResponse {
 	product: Product;
 	isElevatedUser: boolean;
+}
+
+export interface EmployeeDetailPageResponse extends PageResponse {
+	employee: Employee;
+	isInitialEmployee: boolean;
+	employeeTypes: EmployeeType[];
 }
 
 export interface ProductListingPageResponse extends PageResponse {

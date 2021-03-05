@@ -1,101 +1,71 @@
-// import Sequelize from "sequelize";
-// import * as Helper from "../helpers/helper";
-// import { EmployeeModel } from "../models/employeeModel";
-// import * as EmployeeRepository from "../models/employeeModel";
-// import { Resources, ResourceKey } from "../../../resourceLookup";
-// import * as DatabaseConnection from "../models/databaseConnection";
-// import { CommandResponse, Employee, EmployeeSaveRequest } from "../../typeDefinitions";
+import * as Helper from "../helpers/helper";
+import { EmployeeModel } from "../models/employeeModel";
+import * as EmployeeHelper from "./helpers/employeeHelper";
+import { Resources, ResourceKey } from "../../../resourceLookup";
+import { EmployeeClassification } from "../models/constants/entityTypes";
+import { CommandResponse, Employee, EmployeeSaveRequest } from "../../typeDefinitions";
 
-// const validateSaveRequest = (
-// 	saveEmployeeRequest: EmployeeSaveRequest
-// ): CommandResponse<Employee> => {
+const validateSaveRequest = (
+	employeeSaveRequest: EmployeeSaveRequest,
+	isInitialEmployee: boolean = false
+): CommandResponse<Employee> => {
 
-// 	let errorMessage: string = "";
-// 	if (Helper.isBlankString(saveEmployeeRequest.firstName)) {
-// 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_FIRST_NAME_INVALID);
-// 	} else if (Helper.isBlankString(saveEmployeeRequest.lastName)) {
-// 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_LAST_NAME_INVALID);
-//     } else if (Helper.isBlankString(saveEmployeeRequest.password)) {
-// 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
-//     } else if (Helper.isBlankString(saveEmployeeRequest.managerId)) {
-// 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_MANAGER_ID_INVALID);
-//     } else if (Helper.isBlankString(saveEmployeeRequest.employeeId)) {
-//         errorMessage = Resources.getString(ResourceKey.EMPLOYEE_EMPLOYEE_ID_INVALID);
-//     } else if ((saveEmployeeRequest.classification == null) || isNaN(saveEmployeeRequest.classification)
-// 		|| (saveEmployeeRequest.classification < 0)) {
-// 		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_TYPE_INVALID);
-//     }
-// 	return ((errorMessage === "")
-// 		? <CommandResponse<Employee>>{ status: 200 }
-// 		: <CommandResponse<Employee>>{
-// 			status: 422,
-// 			message: errorMessage
-// 		});
-// };
+	let errorMessage: string = "";
 
-// export const execute = async (
-// 	saveEmployeeRequest: EmployeeSaveRequest
-// ): Promise<CommandResponse<Employee>> => {
+	if (Helper.isBlankString(employeeSaveRequest.firstName)) {
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_FIRST_NAME_INVALID);
+	} else if (Helper.isBlankString(employeeSaveRequest.lastName)) {
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_LAST_NAME_INVALID);
+	} else if (Helper.isBlankString(employeeSaveRequest.password)) {
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_PASSWORD_INVALID);
+	} else if (!isInitialEmployee
+		&& ((employeeSaveRequest.classification == null)
+			|| isNaN(employeeSaveRequest.classification)
+			|| !(employeeSaveRequest.classification in EmployeeClassification))) {
 
-// 	const validationResponse: CommandResponse<Employee> =
-// 		validateSaveRequest(saveEmployeeRequest);
-// 	if (validationResponse.status !== 200) {
-// 		return Promise.reject(validationResponse);
-// 	}
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_TYPE_INVALID);
+	} else if (!Helper.isBlankString(employeeSaveRequest.managerId)
+		&& !Helper.isValidUUID(<string>employeeSaveRequest.managerId)) {
 
-// 	const EmployeeToCreate: EmployeeModel = <EmployeeModel>{
-//         active: saveEmployeeRequest.active,
-//         lastName: saveEmployeeRequest.lastName,
-//         password: saveEmployeeRequest.password,
-//         firstName: saveEmployeeRequest.firstName,
-//         managerId: saveEmployeeRequest.managerId,
-//         employeeId: saveEmployeeRequest.employeeId,
-//         classification: saveEmployeeRequest.classification
-// 	};
+		errorMessage = Resources.getString(ResourceKey.EMPLOYEE_MANAGER_ID_INVALID);
+	}
 
-// 	let createTransaction: Sequelize.Transaction;
+	return ((errorMessage === "")
+		? <CommandResponse<Employee>>{ status: 200 }
+		: <CommandResponse<Employee>>{
+			status: 422,
+			message: errorMessage
+		});
+};
 
-// 	return DatabaseConnection.createTransaction()
-// 		.then((createdTransaction: Sequelize.Transaction): Promise<EmployeeModel | null> => {
-// 			createTransaction = createdTransaction;
+export const execute = async (
+	employeeSaveRequest: EmployeeSaveRequest,
+	isInitialEmployee: boolean = false
+): Promise<CommandResponse<Employee>> => {
 
-// 			return EmployeeRepository.queryByLookupCode(
-// 				saveEmployeeRequest.lookupCode,
-// 				createTransaction);
-// 		}).then((queriedEmployee: (EmployeeModel | null)): Promise<EmployeeModel> => {
-// 			if (queriedEmployee != null) {
-// 				return Promise.reject(<CommandResponse<Employee>>{
-// 					status: 409,
-// 					message: Resources.getString(ResourceKey.Employee_LOOKUP_CODE_CONFLICT)
-// 				});
-// 			}
+	const validationResponse: CommandResponse<Employee> =
+		validateSaveRequest(employeeSaveRequest, isInitialEmployee);
+	if (validationResponse.status !== 200) {
+		return Promise.reject(validationResponse);
+	}
 
-// 			return EmployeeModel.create(
-// 				EmployeeToCreate,
-// 				<Sequelize.CreateOptions>{
-// 					transaction: createTransaction
-// 				});
-// 		}).then((createdEmployee: EmployeeModel): CommandResponse<Employee> => {
-// 			createTransaction.commit();
+	const employeeToCreate: EmployeeModel = <EmployeeModel>{
+		active: true,
+		lastName: employeeSaveRequest.lastName,
+		firstName: employeeSaveRequest.firstName,
+		managerId: employeeSaveRequest.managerId,
+		classification: (!isInitialEmployee
+			? <EmployeeClassification>employeeSaveRequest.classification
+			: EmployeeClassification.GeneralManager),
+		password: Buffer.from(
+			EmployeeHelper.hashString(employeeSaveRequest.password))
+	};
 
-// 			return <CommandResponse<Employee>>{
-// 				status: 201,
-// 				data: <Employee>{
-// 					id: createdEmployee.id,
-// 					count: createdEmployee.count,
-// 					lookupCode: createdEmployee.lookupCode,
-// 					createdOn: Helper.formatDate(createdEmployee.createdOn)
-// 				}
-// 			};
-// 		}).catch((error: any): Promise<CommandResponse<Employee>> => {
-// 			if (createTransaction != null) {
-// 				createTransaction.rollback();
-// 			}
-
-// 			return Promise.reject(<CommandResponse<Employee>>{
-// 				status: (error.status || 500),
-// 				message: (error.message
-// 					|| Resources.getString(ResourceKey.Employee_UNABLE_TO_SAVE))
-// 			});
-// 		});
-// };
+	return EmployeeModel.create(employeeToCreate)
+		.then((createdEmployee: EmployeeModel): CommandResponse<Employee> => {
+			return <CommandResponse<Employee>>{
+				status: 201,
+				data: EmployeeHelper.mapEmployeeData(createdEmployee)
+			};
+		});
+};

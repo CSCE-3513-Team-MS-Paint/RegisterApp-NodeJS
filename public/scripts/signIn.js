@@ -1,42 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
 	// TODO: Anything you want to do when the page is loaded?
-	getSubmitActionElement().addEventListener("click", submitActionClick);
+	const employeeIdElement = getEmployeeIDElement();
+	employeeIdElement.focus();
+	employeeIdElement.select();
 });
 
 function validateForm() {
 	//ensures employee ID is valid
     const employeeID = getEmployeeID();
-    // if((employeeID == null) || (isNaN(employeeID)) || (employeeID < 0))   {
-    //     displayError("Please provide a valid employee id.");
-    //     return false;
-    // } 
-    if ((employeeID == null) || (employeeID.trim()==="")) {
-        displayError("Please provide a valid employee id.");
-        return false;
-    }
+    const employeeIDElement = getEmployeeIDElement();
+	if (isNaN(Number(employeeID))
+		|| (Number(employeeID) <= 0)) {
+
+		displayError("Please provide a valid employee ID.");
+        console.log("here");
+
+		employeeIDElement.focus();
+		employeeIDElement.select();
+		
+		return false;
+	}
     //ensures password is valid
     const password = getPassword();
+    const passwordElement = getPasswordElement();
     if((password == null) || (password.trim()===""))  {
         displayError("Please provide a valid password");
+
+        passwordElement.focus();
+        passwordElement.select();
         return false;
     }
+    console.log("here");
 	return true;
 }
 
-function submitActionClick() {
-    if (!validateForm()) {
-        return;
-    }
-    window.location.assign("/mainMenu");
-}
-
 //getters and setters
-function getSubmitActionElement() {
-    return document.getElementById("submit");
-}
 
 function getEmployeeIDElement() {
-    return document.getElementById("employeeID");
+    return document.getElementById("employeeId");
 }
 function getEmployeeID() {
     return getEmployeeIDElement().value;

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	getStartTransactionActionElement().addEventListener("click", startTransactionActionClick);
 	getViewProductsActionElement().addEventListener("click", viewProductActionClick);
     getEmployeeDetailsActionElement().addEventListener("click", employeeDetailsActionClick);
+    getProductSalesReportElement().addEventListener("click", productSalesReportClick);
     getCashierReportActionElement().addEventListener("click", cashierReportActionClick);
     getSignOutActionElement().addEventListener("click", signOutActionClick);
 });
@@ -14,6 +15,9 @@ function viewProductActionClick() {
 }
 function employeeDetailsActionClick() {
     window.location.assign("/employeeDetail");
+}
+function productSalesReportClick() {
+    displayError("Functionality has not yet been implemented");
 }
 function cashierReportActionClick() {
     displayError("Functionality has not yet been implemented.");
@@ -34,6 +38,9 @@ function getEmployeeDetailsActionElement() {
     return document.getElementById("employeeDetails");
 }
 
+function getProductSalesReportElement() {
+    return document.getElementById("productSalesReport");
+}
 function getCashierReportActionElement() {
     return document.getElementById("cashierReport");
 }

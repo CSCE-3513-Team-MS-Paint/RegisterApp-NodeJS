@@ -184,7 +184,7 @@ function signOutActionClickHandler() {
 		if ((callbackResponse.data != null)
 			&& (callbackResponse.data.redirectUrl != null)
 			&& (callbackResponse.data.redirectUrl !== "")) {
-
+	
 			window.location.replace(callbackResponse.data.redirectUrl);
 		} else {
 			window.location.replace("/");

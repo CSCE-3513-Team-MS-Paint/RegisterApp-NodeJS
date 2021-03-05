@@ -29,15 +29,16 @@
 		<!-- TODO: Add the various action button elements -->
 		<div class="mainMenuWrapper">
 			<button id="startTransaction" type="button" class="action">Start Transaction</button>
-			</br>
-			</br>
+			</br></br>
 			<button id="viewProducts" type="button" class="action">View Products</button>
-			</br>
-			</br>
-			<button id="employeeDetails" type="button" class="action">Employee Details</button>
-			</br>
-			</br>
-			<button id="cashierReport" type="button" class="action">Cashier Report</button>
+			<div <% if (!locals.isElevatedUser) { %>class="hidden"<% } %>>
+				</br>
+				<button id="employeeDetails" type="button" class="action">Employee Details</button>
+				</br></br>
+				<button id="productSalesReport" type="button" class="action"title="Functionality Not Available">Product Sales</button>
+				<br /><br />
+				<button id="cashierReport" type="button" class="action">Cashier Report</button>
+			</div>
 		</div>
 	</div>
 

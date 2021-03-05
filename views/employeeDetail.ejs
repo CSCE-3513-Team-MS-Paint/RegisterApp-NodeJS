@@ -5,7 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 
 	<link rel="stylesheet" type="text/css" href="/styles/master.css">
-	<link rel="stylesheet" type="text/css" href="/styles/employeeDetail.css">
 
 	<script type="text/javascript" src="/scripts/master.js" defer></script>
 	<script type="text/javascript" src="/scripts/employeeDetail.js" defer></script>
@@ -16,7 +15,7 @@
 	<div class="header">
 		<h1 class="primary-message">Employee Detail</h1>
 	</div>
-
+		
 	<div id="main" class="main">
 		<div id="error" <% if (!locals.errorMessage || (locals.errorMessage === "")) { %> class="hidden" <% } %>>
 			<h4 id="errorMessage" class="error-message">
@@ -26,64 +25,66 @@
 			</h4>
 		</div>
 
-		<div class="employeeDetailWrapper">
+		<div class="inputContent">
 			<table id="employeeDetails">
 				<tbody>
 					<tr class="hidden">
 						<td>ID:</td>
 						<td>
-							<input id="id" type="hidden" value="<% if (locals.employee && locals.employee.id) { %><%= locals.employee.id %><% } %>" />
+							<input id="employeeId" type="hidden" value="<% if (locals.employee && locals.employee.id) { %><%= locals.employee.id %><% } %>" />
 						</td>
 					</tr>
 					<tr class="hidden">
 						<td>Manager ID:</td>
 						<td>
-							<input id="managerId" type="hidden" value="<% if (locals.employee && locals.employee.managerId) { %><%= locals.employee.managerId %><% } %>" />
+							<input id="employeeManagerId" type="hidden" value="<% if (locals.employee && locals.employee.managerId) { %><%= locals.employee.managerId %><% } %>" />
 						</td>
 					</tr>
-					<!--<tr <% if (!locals.employee || !locals.employee.id || (locals.employee.id.trim() === "")) { %>class="hidden"<% } %>>-->
-					<tr>
+					<tr <% if (!locals.employee || !locals.employee.id || (locals.employee.id.trim() === "")) { %>class="hidden"<% } %>>
 						<td class="label">Employee ID:</td>
 						<td>
-							<input id="employeeId" type="text" value="<% if (locals.employee && locals.employee.employeeId) { %><%= locals.employee.employeeId %><% } %>" class="update"  />
+							<input id="employeeEmployeeId" type="text" value="<% if (locals.employee && locals.employee.employeeId) { %><%= locals.employee.employeeId %><% } %>" class="update" disabled />
 						</td>
 					</tr>
 					<tr>
 						<td class="label">First Name:</td>
 						<td>
-							<input id="firstName" type="text" value="<% if (locals.employee && locals.employee.firstName) { %><%= locals.employee.firstName %><% } %>" class="update"/>
+							<input id="employeeFirstName" type="text" value="<% if (locals.employee && locals.employee.firstName) { %><%= locals.employee.firstName %><% } %>" class="update" />
 						</td>
 					</tr>
 					<tr>
 						<td class="label">Last Name:</td>
 						<td>
-							<input id="lastName" type="text" value="<% if (locals.employee && locals.employee.lastName) { %><%= locals.employee.lastName %><% } %>" class="update"/>
+							<input id="employeeLastName" type="text" value="<% if (locals.employee && locals.employee.lastName) { %><%= locals.employee.lastName %><% } %>" class="update" />
 						</td>
 					</tr>
 					<tr>
 						<td class="label">Password:</td>
 						<td>
-							<input id="password" type="text" value="<% if (locals.employee && locals.employee.password) { %><%= locals.employee.password %><% } %>" class="update"/>
+							<input id="employeePassword" type="password" value="" class="update" />
 						</td>
 					</tr>
 					<tr>
-						<td class="label">Verify Password:</td>
+						<td class="label">Confirm Password:</td>
 						<td>
-							<input id="verifyPassword" type="text" value="<% if (locals.employee && locals.employee.password) { %><%= locals.employee.password %><% } %>" class="update"/>
+							<input id="employeeConfirmPassword" type="password" value="" class="update" />
 						</td>
 					</tr>
-					<tr>
+					<tr <% if (locals.isInitialEmployee) { %>class="hidden"<% } %>>
 						<td class="label">Employee Type:</td>
 						<td>
-							<input id="employeeType" type="text" value="<% if (locals.employee && locals.employee.classification) { %><%= locals.employee.classification %><% } %>" class="update"/>
+							<select id="employeeType" class="select">
+								<% locals.employeeTypes.forEach((employeeType) => { %>
+									<option value="<%= employeeType.value %>" <% if ((locals.employee != null) && (locals.employee.classification === employeeType.value)) { %>selected<% } %>><%= employeeType.label %></option>
+								<% }); %>
+							</select>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
-		<!-- TODO: An action element to initiate a save -->
-		<div>
+		<div class="employeeActionsWrapper <% if (locals.errorMessage && (locals.errorMessage !== "")) { %>hidden<% } %>">
 			<br />
 			<button id="saveButton" type="button" class="action">Save</button>
 		</div>
@@ -106,4 +107,4 @@
 
 </body>
 
-</html> 
+</html>
