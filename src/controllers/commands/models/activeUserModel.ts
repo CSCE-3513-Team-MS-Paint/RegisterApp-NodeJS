@@ -87,3 +87,4 @@ export const queryByEmployeeId = async (
 		where: <Sequelize.WhereAttributeHash>{ employeeId: employeeId }
 	});
 };
+

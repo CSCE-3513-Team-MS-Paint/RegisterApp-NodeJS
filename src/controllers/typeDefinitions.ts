@@ -4,6 +4,18 @@ export interface ProductSaveRequest {
 	count: number;
 	lookupCode: string;
 }
+
+export interface EmployeeSaveRequest {
+	id?: string;
+	active: boolean;
+	lastName: string;
+	password: string;
+	firstName: string;
+	managerId?: string;
+	employeeId: string;
+	classification: number;
+	isInitialEmployee?: boolean;
+}
 // End request object definitions
 
 // Response object definitions
@@ -37,12 +49,22 @@ export interface EmployeeType {
 	value: number;
 	label: string;
 }
+
+export interface SignInRequest {
+	employeeId: string;
+	password: string;
+}
 // End response data object definitions
 
 // Page response data
 export interface PageResponse {
 	errorMessage?: string;
 }
+
+export interface SignInPageResponse {
+	errorMessage?: string;
+}
+
 
 export interface MainMenuPageResponse extends PageResponse {
 	isElevatedUser: boolean;
@@ -67,6 +89,15 @@ export interface ApiResponse {
 
 export interface ProductSaveResponse extends ApiResponse {
 	product: Product;
+}
+
+export interface EmployeeSaveResponse extends ApiResponse {
+	employee: Employee;
+}
+
+export interface ApiResponse {
+	redirectUrl?: string;
+	errorMessage?: string;
 }
 // End API response data
 // End response object definitions

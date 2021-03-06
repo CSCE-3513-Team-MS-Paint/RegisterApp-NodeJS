@@ -19,3 +19,4 @@ export const execute = async (sessionKey: string): Promise<CommandResponse<Activ
 			});
 	});
 };
+

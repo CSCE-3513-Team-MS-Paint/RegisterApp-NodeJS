@@ -107,3 +107,4 @@ export const queryActiveExists = async (): Promise<EmployeeModel | null> => {
 		where: <Sequelize.WhereAttributeHash>{ active: true }
 	});
 };
+

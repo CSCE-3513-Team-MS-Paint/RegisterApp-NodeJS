@@ -184,11 +184,19 @@ function signOutActionClickHandler() {
 		if ((callbackResponse.data != null)
 			&& (callbackResponse.data.redirectUrl != null)
 			&& (callbackResponse.data.redirectUrl !== "")) {
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> master
 			window.location.replace(callbackResponse.data.redirectUrl);
 		} else {
 			window.location.replace("/");
 		}
 	});
 }
+<<<<<<< HEAD
 //End sign out
+=======
+//End sign out
+>>>>>>> master

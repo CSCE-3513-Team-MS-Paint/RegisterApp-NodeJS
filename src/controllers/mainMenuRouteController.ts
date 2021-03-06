@@ -6,10 +6,14 @@ import * as ValidateActiveUser from "./commands/activeUsers/validateActiveUserCo
 import { PageResponse, CommandResponse, ActiveUser, MainMenuPageResponse } from "./typeDefinitions";
 
 export const start = async (req: Request, res: Response): Promise<void> => {
+
+	return res.render(ViewNameLookup.MainMenu);
+	console.log("Working");
 	if (Helper.handleInvalidSession(req, res)) {
 		return;
 	}
 
+	console.log("shity");
 	return ValidateActiveUser.execute((<Express.Session>req.session).id)
 		.then((activeUserCommandResponse: CommandResponse<ActiveUser>): void => {
 			// TODO: Examine the ActiveUser classification if you want this information
@@ -39,3 +43,4 @@ export const start = async (req: Request, res: Response): Promise<void> => {
 			}
 		});
 };
+
